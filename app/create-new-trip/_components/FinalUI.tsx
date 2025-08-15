@@ -2,7 +2,7 @@ import React from 'react'
 import { Button } from '@/components/ui/button'
 import { Globe, Plane } from 'lucide-react'
 
-function FinalUI({onSelectedOption}:any) {
+function FinalUI({onSelectedOption, disable}:any) {
   const handleViewTrip = () => {
     onSelectedOption('View Trip Details')
   }
@@ -26,6 +26,7 @@ function FinalUI({onSelectedOption}:any) {
       
       {/* View Trip Button */}
       <Button 
+        disabled={disable}
         onClick={handleViewTrip}
         className='bg-primary text-white px-8 py-2 rounded-lg font-medium border border-primary hover:bg-transparent hover:text-primary'
       >
