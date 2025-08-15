@@ -41,7 +41,7 @@ export async function POST(req:NextRequest) {
     const messages = await req.json();
 
     const completion = await openai.chat.completions.create({
-      model: 'openai/gpt-3.5-turbo',
+      model: 'openai/gpt-4.1-mini',
       messages: [
         {
           role: 'system',
@@ -49,46 +49,39 @@ export async function POST(req:NextRequest) {
         },
         ...messages
       ],
-      max_tokens: 300,
+      max_tokens: 500,
     });
     console.log(completion.choices[0].message);
 
     const message = completion.choices[0].message;
+    const content = message?.content ?? '';
 
-    // The model is instructed to return strict JSON, but sometimes it returns plain text
-    // or wraps JSON in code fences. Try to recover JSON robustly, otherwise return
-    // a fallback object containing the raw text and an 'unknown' ui tag.
-    const raw = message.content ?? '';
-
-    const tryParse = (text: string) => {
+    const jsonMatch = content.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
       try {
-        return JSON.parse(text);
-      } catch (e) {
-        return null;
-      }
-    };
-
-    // Remove common code-fence wrappers (```json ... ``` or ``` ... ```)
-    let cleaned = raw.replace(/```\s*json\s*/i, '').replace(/```/g, '').trim();
-
-    // First try parsing cleaned content directly
-    let parsed = tryParse(cleaned);
-
-    // If that fails, try to extract the first {...} block and parse it
-    if (!parsed) {
-      const match = cleaned.match(/\{[\s\S]*\}/);
-      if (match) {
-        parsed = tryParse(match[0]);
+        const fixedJson = jsonMatch[0]
+          .replace(/(\w+)\s*:/g, '"$1":'); // resp -> "resp":
+        
+        const parsed = JSON.parse(fixedJson);
+        return NextResponse.json(parsed);
+      } catch (parseError) {
+        console.log('JSON parsing failed, trying text format...');
       }
     }
 
-    // Final fallback: return the raw text as the 'resp' and ui as 'unknown'
-    if (!parsed) {
-      console.warn('AI response was not valid JSON, returning fallback object. Raw:', raw);
-      return NextResponse.json({ resp: raw, ui: 'unknown' });
+    const match = content.match(/ui:\s*'([^']+)'/);
+    let ui = null;
+    if (match) {
+      ui = match[1];
     }
 
-    return NextResponse.json(parsed);
+    const resp = content.replace(/\{\s*ui:\s*'[^']+'\s*\}/, '').trim();
+    
+    return NextResponse.json({
+      resp: resp,
+      ui: ui
+    });
+
   } catch (error) {
     console.error(error);
     return NextResponse.json({error}, { status: 500 });

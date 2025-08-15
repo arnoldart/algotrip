@@ -5,10 +5,14 @@ import { Textarea } from '@/components/ui/textarea'
 import { Loader, Send } from 'lucide-react'
 import React, { useState } from 'react'
 import EmptyBoxState from './EmptyBoxState'
+import { u } from 'motion/react-client'
+import GroupSizeUI from './GroupSizeUI'
+import BudgetUI from './BudgetUI'
 
 type Message = {
   role:string,
   content:string
+  ui?:string
 }
 
 function ChatBox() {
@@ -38,12 +42,24 @@ function ChatBox() {
     setMessages((prev:Message[]) => [...prev, 
       {
         role: "assistant",
-        content: data?.resp
+        content: data?.resp,
+        ui: data?.ui
       }
     ])
 
     setLoading(false)
   }
+
+  const RenderGenerativeUI = (ui:string|undefined) => {
+    if(ui=="budget") {
+      return <BudgetUI onSelectedOption={(v:string) => {setUserInput(v); onSend()}} />
+    }else if(ui=="groupSize") {
+      return <GroupSizeUI onSelectedOption={(v:string) => {setUserInput(v); onSend()}} />
+    }
+
+    return null
+  }
+
 
   return (
     <div className='h-[87vh] flex flex-col'>
@@ -62,6 +78,7 @@ function ChatBox() {
             <div className='flex justify-start mt-2' key={index}>
               <div className='max-w-lg bg-gray-100 text-black px-4 py-2 rounded-lg'>
                 {msg.content}
+                {RenderGenerativeUI(msg.ui ?? "")}
               </div>
             </div>
         ))}
