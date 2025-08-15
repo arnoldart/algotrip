@@ -36,6 +36,8 @@ function Hero() {
 			router.push('/sign-in')
 			return
 		}
+
+		router.push('/create-new-trip')
 	}
 
 	return (
