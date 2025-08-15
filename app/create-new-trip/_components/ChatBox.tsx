@@ -8,6 +8,8 @@ import EmptyBoxState from './EmptyBoxState'
 import { u } from 'motion/react-client'
 import GroupSizeUI from './GroupSizeUI'
 import BudgetUI from './BudgetUI'
+import TripDurationUI from './TripDurationUI'
+import FinalUI from './FinalUI'
 
 type Message = {
   role:string,
@@ -55,6 +57,10 @@ function ChatBox() {
       return <BudgetUI onSelectedOption={(v:string) => {setUserInput(v); onSend()}} />
     }else if(ui=="groupSize") {
       return <GroupSizeUI onSelectedOption={(v:string) => {setUserInput(v); onSend()}} />
+    }else if(ui=="TripDuration") {
+      return <TripDurationUI onSelectedOption={(v:string) => {setUserInput(v); onSend()}} />
+    }else if(ui=="Final") {
+      return <FinalUI onSelectedOption={(v:string) => {setUserInput(v); onSend()}} />
     }
 
     return null
