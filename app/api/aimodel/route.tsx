@@ -107,6 +107,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { Ollama } from 'ollama';
+import { searchImages } from '@/utils/duckduckgoSearch';
 
 const ollama = new Ollama({ 
   host: 'http://localhost:11434' 
@@ -132,7 +133,7 @@ Response format:
   "ui": "appropriate_component"
 }
 
-IMPORTANT: Read the conversation carefully to know what has been answered already.`
+IMPORTANT: Read the conversation carefully to know what has been answered already.`;
 
 const FINAL_PROMPT = `Create a travel plan JSON using the collected information.
 
@@ -149,7 +150,7 @@ OUTPUT ONLY THIS EXACT STRUCTURE:
         "hotel_name": "string",
         "hotel_address": "string",
         "price_per_night": "IDR amount",
-        "hotel_image_url": "https://via.placeholder.com/300x200",
+        "hotel_image_url": "PLACEHOLDER_HOTEL_IMAGE",
         "geo_coordinates": {"latitude": 0, "longitude": 0},
         "rating": 0,
         "description": "short description"
@@ -163,7 +164,7 @@ OUTPUT ONLY THIS EXACT STRUCTURE:
           {
             "place_name": "string",
             "place_details": "description",
-            "place_image_url": "https://via.placeholder.com/300x200",
+            "place_image_url": "PLACEHOLDER_PLACE_IMAGE",
             "geo_coordinates": {"latitude": 0, "longitude": 0},
             "place_address": "address",
             "ticket_pricing": "IDR amount or Free",
@@ -176,13 +177,50 @@ OUTPUT ONLY THIS EXACT STRUCTURE:
   }
 }
 
-Limit: 2 hotels, 2-3 activities per day.`
+Limit: 2 hotels, 2-3 activities per day.`;
+
+// Function to fetch real images for hotels and places
+async function enrichWithRealImages(tripPlan: any) {
+  try {
+    // Get hotel images
+    if (tripPlan.hotels) {
+      for (const hotel of tripPlan.hotels) {
+        if (hotel.hotel_image_url === "PLACEHOLDER_HOTEL_IMAGE") {
+          const imageQuery = `${hotel.hotel_name} ${tripPlan.destination} hotel`;
+          const imageUrl = await searchImages(imageQuery);
+          hotel.hotel_image_url = imageUrl;
+          console.log(`Found hotel image for ${hotel.hotel_name}: ${imageUrl}`);
+        }
+      }
+    }
+
+    // Get place images
+    if (tripPlan.itinerary) {
+      for (const day of tripPlan.itinerary) {
+        if (day.activities) {
+          for (const activity of day.activities) {
+            if (activity.place_image_url === "PLACEHOLDER_PLACE_IMAGE") {
+              const imageQuery = `${activity.place_name} ${tripPlan.destination}`;
+              const imageUrl = await searchImages(imageQuery);
+              activity.place_image_url = imageUrl;
+              console.log(`Found place image for ${activity.place_name}: ${imageUrl}`);
+            }
+          }
+        }
+      }
+    }
+
+    return tripPlan;
+  } catch (error) {
+    console.error('Error enriching with images:', error);
+    return tripPlan;
+  }
+}
 
 export async function POST(req: NextRequest) {
   try {
     const { messages, isFinal } = await req.json();
 
-    // Log conversation history for debugging
     console.log('Conversation history:', messages);
 
     const conversation = [
@@ -213,6 +251,13 @@ export async function POST(req: NextRequest) {
 
     try {
       const jsonResponse = JSON.parse(content);
+      
+      // For final response, enrich with real images
+      if (isFinal && jsonResponse.trip_plan) {
+        console.log('Enriching trip plan with real images...');
+        const enrichedTripPlan = await enrichWithRealImages(jsonResponse.trip_plan);
+        return NextResponse.json({ trip_plan: enrichedTripPlan });
+      }
       
       // Validate response structure for regular chat
       if (!isFinal) {

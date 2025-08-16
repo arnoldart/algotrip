@@ -4,8 +4,10 @@ import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useUser } from '@clerk/nextjs';
 import { UserDetailContext } from '@/context/UserDetailContext';
+import { TripDetailContext } from '@/context/TripDetailContext';
+import { TripInfo } from './create-new-trip/_components/ChatBox';
 
-function provider({
+function Provider({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -13,6 +15,8 @@ function provider({
 
   const CreateUser = useMutation(api.user.CreateNewUser)
   const [userDetail, setUserDetail] = useState<any>()
+  const [tripDetailInfo, setTripDetailInfo] = useState<TripInfo | null>(null)
+
   const {user} = useUser()
 
   useEffect(() => {
@@ -30,16 +34,30 @@ function provider({
 
   return (
     <UserDetailContext.Provider value={{ userDetail, setUserDetail }}>
-      <div>
-        <Header />
-        {children}
-      </div>
+      <TripDetailContext.Provider value={{ tripDetailInfo, setTripDetailInfo }}>
+        <div>
+          <Header />
+          {children}
+        </div>
+      </TripDetailContext.Provider>
     </UserDetailContext.Provider>
   )
 }
 
-export default provider
+export default Provider
 
 export const useUserDetail = () => {
-  return useContext(UserDetailContext)
+  const context = useContext(UserDetailContext)
+  if (!context) {
+    throw new Error('useUserDetail must be used within UserDetailContext Provider')
+  }
+  return context
+}
+
+export const useTripDetail = () => {
+  const context = useContext(TripDetailContext)
+  if (!context) {
+    throw new Error('useTripDetail must be used within TripDetailContext Provider')
+  }
+  return context
 }

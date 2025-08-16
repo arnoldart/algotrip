@@ -11,13 +11,23 @@ import TripDurationUI from './TripDurationUI'
 import FinalUI from './FinalUI'
 import { useMutation } from 'convex/react'
 import { api } from '@/convex/_generated/api'
-import { useUserDetail } from '@/app/provider'
+import { useTripDetail, useUserDetail } from '@/app/provider'
 import { v4 as uuidv4 } from 'uuid'
 
 type Message = {
   role:string,
   content:string
   ui?:string
+}
+
+export type TripInfo = {
+  budget: string;
+  destination: string;
+  duration: string; 
+  group_size: string;
+  origin: string;
+  hotels: any;
+  itinerary: any;
 }
 
 // {
@@ -136,6 +146,7 @@ function ChatBox() {
   const [tripDetail, setTripDetail] = useState<any>()
   const SaveTripDetail = useMutation(api.tripDetail.CreateTripDetail)
   const { userDetail } = useUserDetail()
+  const { tripDetailInfo, setTripDetailInfo } = useTripDetail()
 
   const onSend = async () => {
     if(!userInput?.trim()) return
@@ -168,6 +179,7 @@ function ChatBox() {
 
     if(isFinal) {
       setTripDetail(data?.trip_plan)
+      setTripDetailInfo(data?.trip_plan)
       const tripId = uuidv4()
       await SaveTripDetail({
         tripDetail: data?.trip_plan,
