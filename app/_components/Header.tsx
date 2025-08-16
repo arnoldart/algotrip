@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button'
 import { SignInButton, UserButton, useUser } from '@clerk/nextjs'
 import Image from 'next/image'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import React from 'react'
 
 const menuOptions = [
@@ -21,6 +22,7 @@ const menuOptions = [
 
 function Header() {
   const { user } = useUser();
+  const path = usePathname()
 
   return (
     <div className='flex justify-between items-center p-4'>
@@ -42,13 +44,20 @@ function Header() {
             Get Started
           </Button>
         </SignInButton>
-      ) : (
+      ) : 
+        path === '/create-new-trip' ? 
+        <Link href='/my-trips'>
+          <Button>
+            Create Trip
+          </Button>
+        </Link>
+        :
         <Link href='/create-new-trip'>
           <Button>
             Create Trip
           </Button>
         </Link>
-      )}
+      }
       <UserButton />
       </div>
       
