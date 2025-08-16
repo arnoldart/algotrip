@@ -199,7 +199,7 @@ export async function POST(req: NextRequest) {
       stream: false,
       format: 'json',
       options: {
-        temperature: 0.3, // Slightly higher for better reasoning
+        temperature: 0.3,
         top_k: 40,
         top_p: 0.9,
         repeat_penalty: 1.1,
