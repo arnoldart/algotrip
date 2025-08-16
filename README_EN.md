@@ -265,5 +265,3 @@ This project is licensed under the MIT License.
 If you have questions or issues, please create an issue on GitHub repository or contact the developer.
 
 ---
-
-Built with ❤️ using Next.js and AI

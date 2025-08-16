@@ -265,5 +265,3 @@ This project is licensed under the MIT License.
 Jika ada pertanyaan atau issue, silakan buat issue di GitHub repository atau hubungi developer.
 
 ---
-
-Dibuat dengan ❤️ menggunakan Next.js dan AI
