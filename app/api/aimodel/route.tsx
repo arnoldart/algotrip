@@ -108,6 +108,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Ollama } from 'ollama';
 import { searchImages } from '@/utils/duckduckgoSearch';
+import { auth, currentUser } from "@clerk/nextjs/server";
+import { aj } from "../arcjet/route";
 
 const ollama = new Ollama({ 
   host: 'http://localhost:11434' 
@@ -218,8 +220,25 @@ async function enrichWithRealImages(tripPlan: any) {
 }
 
 export async function POST(req: NextRequest) {
+  const { messages, isFinal } = await req.json();
+  const {has} = await auth()
+  const user = await currentUser();
+  const hasPremiumAccess = has({plan: 'monthly'})
+  const decision = await aj.protect(req, { userId: user?.primaryEmailAddress?.emailAddress || "", requested: isFinal ? 5 : 0});
+
+  console.log(decision)
+
+  const isRateLimited = decision.conclusion === 'DENY' || 
+    (decision.reason && decision.reason.type === 'RATE_LIMIT' && (decision.reason as any).remaining === 0);
+  
+  if(isRateLimited && !hasPremiumAccess) {
+    return NextResponse.json({
+      resp: "No Free Credit Remaining",
+      ui: 'limit'
+    })
+  }
+
   try {
-    const { messages, isFinal } = await req.json();
 
     console.log('Conversation history:', messages);
 
