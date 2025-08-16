@@ -24,7 +24,7 @@ function Itinerary() {
         </div>
       ),
     },
-    ...(tripData?.itinerary || []).map((dayData) => ({
+    ...(tripData?.itinerary || []).map((dayData: any) => ({
       title: `Day ${dayData.day}`,
       content: (
         <div className="flex flex-col gap-4">

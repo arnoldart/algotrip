@@ -108,7 +108,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { searchImages } from '@/utils/unsplashImageSearch';
 import { auth, currentUser } from "@clerk/nextjs/server";
-import { aj } from "../arcjet/route";
+import { aj } from "@/lib/arcjet";
 import { validateAIConfig } from '@/lib/ai-config';
 import { createAIProvider, ChatMessage } from '@/lib/ai-providers';
 
