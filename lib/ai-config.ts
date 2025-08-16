@@ -46,19 +46,13 @@ export function validateAIConfig(): AIProvider {
              provider.model.trim() !== '';
     }
     if (provider.type === 'ollama') {
-      const uri = provider.baseURL || '';
-      return uri.trim() !== '' && 
-             uri !== 'http://localhost:11434' && 
-             process.env.OLLAMA_URI && 
+      return process.env.OLLAMA_URI && 
              process.env.OLLAMA_URI.trim() !== '' &&
              provider.model && 
              provider.model.trim() !== '';
     }
     if (provider.type === 'lmstudio') {
-      const uri = provider.baseURL || '';
-      return uri.trim() !== '' && 
-             uri !== 'http://localhost:1234/v1' && 
-             process.env.LM_STUDIO_URI && 
+      return process.env.LM_STUDIO_URI && 
              process.env.LM_STUDIO_URI.trim() !== '' &&
              provider.model && 
              provider.model.trim() !== '';

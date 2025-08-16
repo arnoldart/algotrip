@@ -60,8 +60,6 @@ function ChatBox() {
     })
     const data = await result.json()
 
-    console.log(data)
-
     // Check if response indicates rate limit
     if(data?.ui === 'limit') {
       setIsLimited(true) // Set limited state

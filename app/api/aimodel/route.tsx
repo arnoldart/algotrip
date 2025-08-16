@@ -234,7 +234,6 @@ export async function POST(req: NextRequest) {
   const hasPremiumAccess = has({plan: 'monthly'})
   const decision = await aj.protect(req, { userId: user?.primaryEmailAddress?.emailAddress || "", requested: isFinal ? 5 : 0});
 
-  console.log(decision)
 
   const isRateLimited = decision.conclusion === 'DENY' || 
     (decision.reason && decision.reason.type === 'RATE_LIMIT' && (decision.reason as any).remaining === 0);
