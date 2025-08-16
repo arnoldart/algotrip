@@ -1,25 +1,25 @@
-# 🌍 Algo Trip - AI-Powered Trip Planner
+# 🌍 AlgoTrip - AI-Powered Trip Planner
 
-> 🌐 **[English Version](README_EN.md)** | **[AI Provider Guide](AI_PROVIDER_GUIDE.md)** | **[AI Provider Guide (EN)](AI_PROVIDER_GUIDE_EN.md)**
+> 🌐 **[Bahasa Indonesia](README.md)** | **[AI Provider Guide](AI_PROVIDER_GUIDE.md)** | **[AI Provider Guide (EN)](AI_PROVIDER_GUIDE_EN.md)**
 
-AlgoTrip adalah aplikasi web yang membantu Anda merencanakan perjalanan yang sempurna dengan bantuan kecerdasan buatan. Aplikasi ini menggunakan AI untuk membuat itinerary perjalanan yang personal dan detail berdasarkan preferensi, budget, dan kebutuhan Anda.
+AlgoTrip is a web application that helps you plan the perfect trip with the assistance of artificial intelligence. This application uses AI to create personalized and detailed travel itineraries based on your preferences, budget, and needs.
 
-## ✨ Fitur Utama
+## ✨ Key Features
 
-- **AI Trip Planning**: Chatbot AI interaktif yang membantu merencanakan perjalanan step-by-step
-- **Personal Itinerary**: Membuat jadwal perjalanan detail dengan rekomendasi tempat, hotel, dan aktivitas
-- **Budget Management**: Kalkulasi biaya perjalanan dengan harga dalam IDR
-- **Image Integration**: Menampilkan gambar real dari hotel dan tempat wisata menggunakan DuckDuckGo Search
-- **User Authentication**: Sistem login/register dengan Clerk
-- **Trip Management**: Menyimpan dan mengelola rencana perjalanan
-- **Rate Limiting**: Pembatasan penggunaan dengan Arcjet untuk mencegah spam
-- **Responsive Design**: Interface yang mobile-friendly dengan Tailwind CSS
+- **AI Trip Planning**: Interactive AI chatbot that helps plan trips step-by-step
+- **Personal Itinerary**: Creates detailed travel schedules with recommendations for places, hotels, and activities
+- **Budget Management**: Travel cost calculation with prices in IDR
+- **Image Integration**: Displays real images of hotels and tourist attractions using Unsplash API
+- **User Authentication**: Login/register system with Clerk
+- **Trip Management**: Save and manage travel plans
+- **Rate Limiting**: Usage limitations with Arcjet to prevent spam
+- **Responsive Design**: Mobile-friendly interface with Tailwind CSS
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **Next.js 15** - React framework dengan App Router
-- **React 19** - Library JavaScript untuk UI
+- **Next.js 15** - React framework with App Router
+- **React 19** - JavaScript library for UI
 - **TypeScript** - Type-safe JavaScript
 - **Tailwind CSS 4** - Utility-first CSS framework
 - **Lucide React** & **Tabler Icons** - Icon libraries
@@ -27,16 +27,16 @@ AlgoTrip adalah aplikasi web yang membantu Anda merencanakan perjalanan yang sem
 - **Magic UI** - UI components
 
 ### Backend & Database
-- **Convex** - Real-time database dan backend
-- **Clerk** - Authentication dan user management
-- **Arcjet** - Rate limiting dan security
+- **Convex** - Real-time database and backend
+- **Clerk** - Authentication and user management
+- **Arcjet** - Rate limiting and security
 
 ### AI & Integration
 - **Groq** - Fast AI inference with Llama models
 - **Ollama** - Local AI model (Qwen2.5:7b)
 - **OpenAI/OpenRouter** - Cloud AI model integration
 - **LM Studio** - Local AI model server
-- **Unplash Image** - Image search untuk hotel dan tempat wisata
+- **Unsplash API** - Image search for hotels and tourist attractions
 
 ### Development Tools
 - **PNPM** - Package manager
@@ -47,15 +47,15 @@ AlgoTrip adalah aplikasi web yang membantu Anda merencanakan perjalanan yang sem
 
 ### Prerequisites
 
-1. **Node.js** (versi 18+)
+1. **Node.js** (version 18+)
 2. **PNPM** package manager
-3. **AI Provider** (pilih salah satu):
-   - **Groq API** untuk cloud inference yang cepat
-   - **Ollama** untuk local AI model
-   - **OpenRouter** untuk berbagai AI models
-   - **LM Studio** untuk local AI server
-4. **Convex** account untuk database
-5. **Clerk** account untuk authentication
+3. **AI Provider** (choose one):
+   - **Groq API** for fast cloud inference
+   - **Ollama** for local AI model
+   - **OpenRouter** for various AI models
+   - **LM Studio** for local AI server
+4. **Convex** account for database
+5. **Clerk** account for authentication
 
 ### Installation
 
@@ -71,12 +71,12 @@ pnpm install
 ```
 
 3. **Setup environment variables**
-Salin file template dan isi dengan nilai aktual:
+Copy the template file and fill with actual values:
 ```bash
 cp .env.example .env.local
 ```
 
-Edit `.env.local` dan isi dengan nilai API keys Anda:
+Edit `.env.local` and fill with your API keys:
 ```env
 # =================================
 # CONVEX DATABASE
@@ -103,63 +103,63 @@ ARCJET_KEY=your_arcjet_key
 NEXT_PUBLIC_UNSPLASH_ACCESS_KEY=your_unsplash_access_key
 
 # =================================
-# AI PROVIDER (PILIH SALAH SATU SAJA!)
+# AI PROVIDER (CHOOSE ONLY ONE!)
 # =================================
 # Groq (Recommended - Fast cloud inference)
 GROQ_API=your_groq_api_key
 GROQ_MODEL=llama-3.1-70b-versatile
 
-# Atau OpenRouter (Multiple AI models)
+# Or OpenRouter (Multiple AI models)
 OPENROUTER_API=your_openrouter_api_key
 OPENROUTER_MODEL=google/gemini-2.5-flash
 
-# Atau Ollama (Local AI)
+# Or Ollama (Local AI)
 OLLAMA_URI=http://localhost:11434
 OLLAMA_MODEL=qwen2.5:7b
 
-# Atau LM Studio (Local AI server)
+# Or LM Studio (Local AI server)
 LM_STUDIO_URI=http://localhost:1234/v1
 LM_STUDIO_MODEL=local-model
 ```
 
-⚠️ **PENTING**: 
-- Konfigurasi hanya SATU AI provider. Aplikasi akan error jika lebih dari satu provider dikonfigurasi.
-- Setiap provider memerlukan dua environment variables: API key/URI + MODEL name.
+⚠️ **IMPORTANT**: 
+- Configure only ONE AI provider. The application will error if more than one provider is configured.
+- Each provider requires two environment variables: API key/URI + MODEL name.
 
 4. **Setup AI Provider**
 
-Pilih salah satu AI provider:
+Choose one AI provider:
 
 **Option A: Groq (Recommended)**
 ```bash
-# Daftar di https://console.groq.com
-# Dapatkan API key dan tambahkan ke .env.local:
+# Register at https://console.groq.com
+# Get API key and add to .env.local:
 GROQ_API=your_groq_api_key
 GROQ_MODEL=llama-3.1-70b-versatile
 ```
 
 **Option B: Ollama (Local)**
 ```bash
-# Install Ollama dari https://ollama.ai
-# Download model yang dibutuhkan
+# Install Ollama from https://ollama.ai
+# Download required model
 ollama pull qwen2.5:7b
-# Set URI dan model di .env.local:
+# Set URI and model in .env.local:
 OLLAMA_URI=http://localhost:11434
 OLLAMA_MODEL=qwen2.5:7b
 ```
 
 **Option C: OpenRouter**
 ```bash
-# Daftar di https://openrouter.ai
-# Dapatkan API key dan tambahkan ke .env.local:
+# Register at https://openrouter.ai
+# Get API key and add to .env.local:
 OPENROUTER_API=your_openrouter_api_key
 OPENROUTER_MODEL=google/gemini-2.5-flash
 ```
 
 **Option D: LM Studio**
 ```bash
-# Install LM Studio dari https://lmstudio.ai
-# Start local server dan set URI di .env.local:
+# Install LM Studio from https://lmstudio.ai
+# Start local server and set URI in .env.local:
 LM_STUDIO_URI=http://localhost:1234/v1
 LM_STUDIO_MODEL=local-model
 ```
@@ -174,38 +174,38 @@ npx convex dev
 pnpm dev
 ```
 
-Jika konfigurasi benar, Anda akan melihat:
+If configuration is correct, you will see:
 ```
 🔧 Validating AI configuration...
 ✅ Using [Provider Name] ([provider type]) with model: [model name]
 ```
 
-Buka [http://localhost:3000](http://localhost:3000) untuk melihat aplikasi.
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
 ## ⚠️ Important Notes
 
-- **Konfigurasi hanya SATU AI provider** - Aplikasi akan menampilkan error jika lebih dari satu provider dikonfigurasi
-- **Validasi otomatis** - Sistem akan memvalidasi konfigurasi saat startup
-- **Error handling** - Pesan error yang jelas akan ditampilkan jika ada masalah konfigurasi
+- **Configure only ONE AI provider** - Application will show error if more than one provider is configured
+- **Automatic validation** - System will validate configuration on startup
+- **Error handling** - Clear error messages will be displayed if there are configuration issues
 
-## 📱 Cara Menggunakan
+## 📱 How to Use
 
-1. **Registrasi/Login**: Daftar atau masuk menggunakan email
-2. **Chat dengan AI**: Klik "Create new trip" dan ikuti pertanyaan AI:
-   - Lokasi asal
-   - Destinasi tujuan
-   - Jumlah peserta (Solo/Couple/Family/Friends)
+1. **Register/Login**: Sign up or log in using email
+2. **Chat with AI**: Click "Create new trip" and follow AI questions:
+   - Starting location
+   - Destination
+   - Group size (Solo/Couple/Family/Friends)
    - Budget (Low/Medium/High)
-   - Durasi perjalanan
-   - Minat perjalanan (adventure, cultural, food, dll)
-3. **Review Itinerary**: AI akan generate jadwal perjalanan lengkap dengan:
-   - Rekomendasi hotel dengan harga
-   - Aktivitas harian
-   - Estimasi waktu dan biaya
-   - Gambar tempat wisata
-4. **Simpan Trip**: Rencana perjalanan tersimpan di "My Trips"
+   - Trip duration
+   - Travel interests (adventure, cultural, food, etc.)
+3. **Review Itinerary**: AI will generate complete travel schedule with:
+   - Hotel recommendations with prices
+   - Daily activities
+   - Time and cost estimates
+   - Tourist attraction images
+4. **Save Trip**: Travel plans are saved in "My Trips"
 
-## 🏗️ Struktur Project
+## 🏗️ Project Structure
 
 ```
 algotrip/
@@ -240,13 +240,13 @@ npx convex deploy     # Deploy to Convex
 ## 🌐 Deployment
 
 ### Vercel (Recommended)
-1. Push ke GitHub repository
-2. Connect repository di [Vercel](https://vercel.com)
+1. Push to GitHub repository
+2. Connect repository on [Vercel](https://vercel.com)
 3. Set environment variables
 4. Deploy
 
-### Environment Variables untuk Production
-Pastikan semua environment variables sudah di-set di platform hosting Anda.
+### Environment Variables for Production
+Make sure all environment variables are set on your hosting platform.
 
 ## 🤝 Contributing
 
@@ -262,8 +262,8 @@ This project is licensed under the MIT License.
 
 ## 📞 Support
 
-Jika ada pertanyaan atau issue, silakan buat issue di GitHub repository atau hubungi developer.
+If you have questions or issues, please create an issue on GitHub repository or contact the developer.
 
 ---
 
-Dibuat dengan ❤️ menggunakan Next.js dan AI
+Built with ❤️ using Next.js and AI

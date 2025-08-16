@@ -1,4 +1,8 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { NextResponse } from 'next/server'
+
+// Import startup validator to check AI config
+import './lib/startup-validator'
 
 const isPublicRoute = createRouteMatcher([
   '/sign-in(.*)',
@@ -10,6 +14,8 @@ export default clerkMiddleware(async (auth, req) => {
   if (!isPublicRoute(req)) {
     await auth.protect()
   }
+  
+  return NextResponse.next()
 })
 
 export const config = {

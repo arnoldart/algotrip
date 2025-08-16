@@ -106,14 +106,22 @@
 // }
 
 import { NextRequest, NextResponse } from "next/server";
-import { Ollama } from 'ollama';
-import { searchImages } from '@/utils/duckduckgoSearch';
+import { searchImages } from '@/utils/unsplashImageSearch';
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { aj } from "../arcjet/route";
+import { validateAIConfig } from '@/lib/ai-config';
+import { createAIProvider, ChatMessage } from '@/lib/ai-providers';
 
-const ollama = new Ollama({ 
-  host: 'http://localhost:11434' 
-});
+// Initialize AI provider
+let aiProvider: any = null;
+
+try {
+  const providerConfig = validateAIConfig();
+  aiProvider = createAIProvider(providerConfig);
+  console.log(`AI Provider initialized: ${providerConfig.name}`);
+} catch (error) {
+  console.error('Failed to initialize AI provider:', error);
+}
 
 const PROMPT = `You are a Trip Planner. You need to collect trip information step by step.
 
@@ -238,11 +246,17 @@ export async function POST(req: NextRequest) {
     })
   }
 
-  try {
+  // Check if AI provider is initialized
+  if (!aiProvider) {
+    return NextResponse.json({
+      error: 'AI provider not configured. Please check your environment variables.'
+    }, { status: 500 });
+  }
 
+  try {
     console.log('Conversation history:', messages);
 
-    const conversation = [
+    const conversation: ChatMessage[] = [
       {
         role: 'system',
         content: isFinal ? FINAL_PROMPT : PROMPT,
@@ -250,23 +264,13 @@ export async function POST(req: NextRequest) {
       ...messages
     ];
 
-    const response = await ollama.chat({
-      model: 'qwen2.5:7b',
-      messages: conversation,
-      stream: false,
-      format: 'json',
-      options: {
-        temperature: 0.3,
-        top_k: 40,
-        top_p: 0.9,
-        repeat_penalty: 1.1,
-        num_ctx: 4096,
-        num_predict: isFinal ? 1500 : 150,
-      }
+    const content = await aiProvider.chat(conversation, {
+      temperature: 0.3,
+      maxTokens: isFinal ? 1500 : 150,
+      format: 'json'
     });
 
-    const content = response.message?.content || '';
-    console.log('Ollama response:', content);
+    console.log('AI Provider response:', content);
 
     try {
       const jsonResponse = JSON.parse(content);
@@ -305,7 +309,9 @@ export async function POST(req: NextRequest) {
     }
 
   } catch (error) {
-    console.error('Ollama API Error:', error);
-    return NextResponse.json({ error: 'Failed to connect to Ollama' }, { status: 500 });
+    console.error('AI API Error:', error);
+    return NextResponse.json({ 
+      error: `AI request failed: ${error instanceof Error ? error.message : 'Unknown error'}` 
+    }, { status: 500 });
   }
 }
